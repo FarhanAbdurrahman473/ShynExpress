@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shyn Express - Kamar Bersih, Hidup Nyaman!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div id="overlay"></div>
+  <header>
+    <div><strong>SHYN EXPRESS</strong></div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#" class="btn-secondary login" onclick="toggleLoginPopup()">Login</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Shyn Express – Kamar Bersih, Hidup Nyaman!</h1>
+      <p>Kami siap membantu menjaga kebersihan kamar Anda dengan layanan profesional yang cepat dan efektif.</p>
+      <div class="buttons">
+        <a href="pesan.html" class="btn-primary">Pesan Sekarang</a>
+        <a href="#pricing" class="btn-secondary">Lihat Paket</a>
+      </div>
+    </div>
+        <div class="hero-image">
+      <img src="./Asset/logo.png" alt="Logo Shyn Express">
+    </div>
+  </section>
+
+  <section id="about" class="aboutUs-background">
+    <div>
+      <h2>Tentang Kami</h2>
+      <p>
+        Shyn Express hadir untuk membantu mahasiswa dan pekerja menjaga kebersihan kamar kos dengan cepat, terjangkau, dan profesional. Kami bukan sekadar jasa bersih-bersih—kami penyelamat kamar darurat.
+      </p>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="features">
+      <div class="card feature-card">
+        <div class="icon icon-orange"><i class="fas fa-check"></i></div>
+        <h3>Layanan Berkualitas</h3>
+      </div>
+      <div class="card feature-card">
+        <div class="icon icon-blue"><i class="fas fa-user-tie"></i></div>
+        <h3>Pembersih Profesional</h3>
+      </div>
+      <div class="card feature-card">
+        <div class="icon icon-red"><i class="fas fa-calendar-check"></i></div>
+        <h3>Reservasi Fleksibel</h3>
+      </div>
+      <div class="card feature-card">
+        <div class="icon icon-green"><i class="fas fa-thumbs-up"></i></div>
+        <h3>Harga Terjangkau</h3>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2>Paket Pembersihan</h2>
+    <div class="pricing">
+      <div class="card">
+        <h3>Basic</h3>
+        <p>Pembersihan kamar standar</p>
+        <p class="price">Rp 20rb / kamar</p>
+        <a href="./pesan.html" class="btn-primary">Pesan Sekarang</a>
+      </div>
+      <div class="card">
+        <h3>Premium</h3>
+        <p>Termasuk sanitasi ringan dan ruang tambahan</p>
+        <p class="price">Rp 22rb / kamar</p>
+        <a href="./pesan.html" class="btn-primary">Pesan Sekarang</a>
+      </div>
+      <div class="card">
+        <h3>Ultimate</h3>
+        <p>Kamar, lantai, kaca, dan sofa</p>
+        <p class="price">Rp 30rb / kamar</p>
+        <a href="./pesan.html" class="btn-primary">Pesan Sekarang</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Shyn Express. All rights reserved.
+  </footer>
+
+  <div id="login-popup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="toggleLoginPopup()">&times;</span>
+      <h2 id="popup-title">Login</h2>
+      <form id="auth-form">
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <div id="signup-extra" style="display: none;">
+          <input type="password" id="confirm-password" placeholder="Konfirmasi Password" required>
+        </div>
+        <button type="submit" id="submit-btn">Masuk</button>
+      </form>
+      <p class="toggle-auth">
+        Belum punya akun? <a href="#" onclick="toggleSignup()">Buat Akun</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function toggleLoginPopup() {
+      const popup = document.getElementById("login-popup");
+      const overlay = document.getElementById("overlay");
+      popup.classList.toggle("show");
+      overlay.classList.toggle("blur");
+      document.body.classList.toggle("blur-active");
+      resetAuthForm();
+    }
+
+    function toggleSignup() {
+      const title = document.getElementById("popup-title");
+      const extra = document.getElementById("signup-extra");
+      const btn = document.getElementById("submit-btn");
+      const toggleText = document.querySelector(".toggle-auth");
+
+      if (title.textContent === "Login") {
+        title.textContent = "Sign Up";
+        extra.style.display = "block";
+        btn.textContent = "Daftar";
+        toggleText.innerHTML = `Sudah punya akun? <a href="#" onclick="toggleSignup()">Login</a>`;
+      } else {
+        title.textContent = "Login";
+        extra.style.display = "none";
+        btn.textContent = "Masuk";
+        toggleText.innerHTML = `Belum punya akun? <a href="#" onclick="toggleSignup()">Buat Akun</a>`;
+      }
+    }
+
+    function resetAuthForm() {
+      document.getElementById("popup-title").textContent = "Login";
+      document.getElementById("signup-extra").style.display = "none";
+      document.getElementById("submit-btn").textContent = "Masuk";
+      document.querySelector(".toggle-auth").innerHTML = `Belum punya akun? <a href="#" onclick="toggleSignup()">Buat Akun</a>`;
+    }
+
+    const authForm = document.getElementById("auth-form");
+    authForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPasswordInput = document.getElementById("confirm-password");
+      const isSignup = document.getElementById("popup-title").textContent === "Sign Up";
+
+      if (isSignup && password !== confirmPasswordInput.value) {
+        alert("Password dan konfirmasi tidak cocok!");
+        return;
+      }
+
+      const endpoint = isSignup ? "signup" : "login";
+      try {
+        const response = await fetch(`http://localhost:3000/${endpoint}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message || "Berhasil!");
+          toggleLoginPopup();
+        } else {
+          alert(data.error || "Terjadi kesalahan.");
+        }
+      } catch (err) {
+        alert("Gagal menghubungi server.");
+      }
+    });
+  </script>
+</body>
+</html>

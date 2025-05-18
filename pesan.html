@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulir Pemesanan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Formulir Pemesanan</h1>
+    <nav>
+      <a href="index.html">Beranda</a>
+      <a href="#" id="logout" style="display: none;">Logout</a>
+    </nav>
+  </header>
+
+  <section class="form-section">
+    <h1>Pesan Sekarang</h1>
+    <p>Silakan isi data berikut untuk melakukan pemesanan.</p>
+
+    <form class="order-form" id="order-form" autocomplete="off">
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" name="nama" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="telepon">No. Telepon</label>
+      <input type="tel" id="telepon" name="telepon" required pattern="[0-9]{10,15}" placeholder="08xxxxxxxxxx" />
+
+      <label for="paket">Pilih Paket</label>
+      <select id="paket" name="paket" required>
+        <option value="">-- Pilih --</option>
+        <option value="basic">Basic</option>
+        <option value="premium">Premium</option>
+        <option value="ultimate">Ultimate</option>
+      </select>
+
+      <label for="catatan">Catatan Tambahan</label>
+      <textarea id="catatan" name="catatan" rows="4"></textarea>
+
+      <button type="submit">Kirim Pesanan</button>
+    </form>
+  </section>
+
+  <footer>
+    &copy; 2025 Shyn Express. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('order-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Pesanan berhasil dikirim!');
+      this.reset();
+    });
+
+    // Logout handling if using JWT
+    if (localStorage.getItem('token')) {
+      document.getElementById('logout').style.display = 'inline-block';
+    }
+
+    document.getElementById('logout')?.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      alert('Anda telah logout');
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>
