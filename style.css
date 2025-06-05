@@ -5,7 +5,7 @@
   --color-primary: #ff6b00;
   --color-primary-light: #ffe7d6;
   --color-secondary-bg: #e3f2fd;
-  --color-accent: #d97706;
+  --color-accent: #d97706; /* Digunakan untuk teks tombol login */
   --color-shadow: rgba(0, 0, 0, 0.05);
   --color-popup-bg: rgba(0, 0, 0, 0.5);
   --transition-speed: 0.3s;
@@ -23,8 +23,8 @@ body {
   transition: filter var(--transition-speed) ease;
 }
 
-/* Blur logic */
-body.blur-active > *:not(#login-popup):not(script):not(style) {
+/* Blur logic: Hanya elemen di body yang akan blur, bukan overlay atau popup */
+body.blur-active > *:not(#login-popup):not(#overlay):not(script):not(style) {
   filter: blur(4px);
   pointer-events: none;
   user-select: none;
@@ -37,14 +37,18 @@ body.blur-active > *:not(#login-popup):not(script):not(style) {
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--color-popup-bg);
-  display: none;
+  background: var(--color-popup-bg); /* Warna dari variabel */
+  opacity: 0; /* Mulai transparan */
+  visibility: hidden; /* Mulai tersembunyi */
   z-index: 999;
+  transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
 }
 
-body.blur-active #overlay {
-  display: block;
+#overlay.blur { /* Menggunakan kelas 'blur' yang ditambahkan oleh JS */
+  opacity: 1;
+  visibility: visible;
 }
+
 
 header {
   background: #fff;
@@ -53,6 +57,9 @@ header {
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow-default);
+  position: sticky; /* Membuat header tetap di atas saat scroll */
+  top: 0;
+  z-index: 100; /* Pastikan di atas konten lain tapi di bawah popup */
 }
 
 nav a {
@@ -60,74 +67,118 @@ nav a {
   text-decoration: none;
   color: var(--color-text);
   font-weight: 500;
+  padding: 8px 0; /* Padding vertikal agar area klik lebih baik */
+  transition: color var(--transition-speed);
+}
+nav a:not(.login):hover {
+  color: var(--color-primary);
 }
 
+/* PERBAIKAN UNTUK TOMBOL LOGIN */
 nav a.login {
-  background: var(--color-primary-light);
-  padding: 8px 16px;
+  background: var(--color-primary-light); /* Latar belakang oranye muda */
+  padding: 8px 16px; /* Padding yang sudah ada */
   border-radius: var(--radius);
-  color: var(--color-accent);
+  color: var(--color-accent); /* Teks oranye lebih gelap */
+  border: 2px solid var(--color-primary); /* Border oranye terang, konsisten dengan .btn-secondary */
+  font-weight: 600; /* Sedikit lebih tebal */
+  transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
 }
+
+nav a.login:hover {
+  background: #fedcc5; /* Latar belakang sedikit lebih gelap saat hover */
+  color: var(--color-accent); /* Warna teks tetap */
+  border-color: #e85e00; /* Border sedikit lebih gelap saat hover */
+}
+/* Akhir Perbaikan Tombol Login */
+
 
 .hero {
   background: var(--color-secondary-bg);
-  padding: 60px 20px;
+  padding: 80px 40px; /* Padding lebih besar */
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 40px; /* Jarak antar item */
+  text-align: center; /* Default text align */
 }
 .hero-text {
-  flex: 1 1 400px;
-  max-width: 400px;
-  text-align: center;
-  animation: slide-in-left 0.8s ease;
+  flex: 1 1 450px; /* Bisa tumbuh, basis 450px */
+  max-width: 500px;
+  /* text-align: left; Dihapus agar mengikuti text-align: center dari .hero atau bisa diset spesifik */
+  animation: slide-in-left 0.8s ease-out;
 }
 .hero-image {
-  flex: 1 1 50%; 
+  flex: 1 1 400px; /* Bisa tumbuh, basis 400px */
   max-width: 400px;
-  margin-left: 20px;
   display: flex;
   justify-content: center;
-  margin-right: 20px;
-  animation: slide-in-right 0.8s ease;
+  align-items: center;
+  animation: slide-in-right 0.8s ease-out;
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .hero-image img {
   max-width: 100%;
   height: auto;
-  max-height: 400px;
+  max-height: 350px; /* Sedikit dikurangi agar lebih proporsional */
   object-fit: contain;
+  border-radius: var(--radius-large); /* Tambahkan sedikit radius jika diinginkan */
 }
 
 .hero h1 {
-  font-size: 36px;
+  font-size: clamp(28px, 5vw, 40px); /* Ukuran font responsif */
   margin-bottom: 20px;
+  color: var(--color-primary); /* Warna primer untuk judul utama */
 }
 
 .hero p {
-  font-size: 18px;
-  margin-bottom: 20px;
+  font-size: clamp(16px, 2.5vw, 18px); /* Ukuran font responsif */
+  margin-bottom: 30px; /* Jarak lebih besar ke tombol */
+  line-height: 1.6;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px; /* Jarak antar tombol */
+  justify-content: center; /* Pusatkan tombol jika hero-text center */
+  flex-wrap: wrap; /* Agar tombol wrap di layar kecil */
 }
 
 .buttons a {
   display: inline-block;
-  margin-right: 12px;
-  padding: 12px 20px;
+  /* margin-right: 12px; Dihapus, gunakan gap dari .buttons */
+  padding: 12px 25px; /* Padding sedikit lebih besar */
   text-decoration: none;
   font-weight: 600;
   border-radius: var(--radius);
-  transition: background var(--transition-speed);
+  transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+  box-shadow: var(--shadow-default);
+}
+.buttons a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
+  border: 2px solid var(--color-primary); /* Border konsisten */
 }
 
 .btn-primary:hover {
-  background: #e85e00;
+  background: #e85e00; /* Warna hover yang sudah ada */
+  border-color: #e85e00;
 }
 
 .btn-secondary {
@@ -136,10 +187,12 @@ nav a.login {
   color: var(--color-primary);
 }
 
-.btn-secondary:hover {
-  background: #fff3eb;
+/* Tombol .btn-secondary di luar navigasi (misal di hero) */
+.hero .btn-secondary:hover,
+#pricing .btn-secondary:hover { /* Lebih spesifik jika diperlukan */
+  background: var(--color-primary-light); /* Latar belakang oranye muda saat hover */
+  color: var(--color-accent);
 }
-
 
 
 .aboutUs-background {
@@ -162,135 +215,172 @@ nav a.login {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.2;
+  opacity: 0.1; /* Opacity sedikit dikurangi agar teks lebih jelas */
   z-index: 1;
 }
 
-.aboutUs-background > * {
+.aboutUs-background > div { /* Menargetkan div di dalam .aboutUs-background */
   position: relative;
   z-index: 2;
   max-width: 800px;
+  background-color: rgba(255, 255, 255, 0.7); /* Latar belakang semi-transparan untuk kontainer teks */
+  padding: 30px;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-default);
+}
+.aboutUs-background h2 {
+    margin-bottom: 20px;
+    font-size: clamp(24px, 4vw, 32px);
+}
+.aboutUs-background p {
+  margin: 0;
+  line-height: 1.7; /* Line height lebih besar */
+  font-size: clamp(16px, 2.5vw, 18px);
 }
 
 section {
-  padding: 60px 40px;
+  padding: 60px 20px; /* Padding horizontal lebih kecil untuk mobile first */
+}
+@media (min-width: 768px) {
+  section {
+    padding: 80px 40px; /* Padding lebih besar untuk layar lebih lebar */
+  }
 }
 
-#about p {
-  margin: 0;
-  line-height: 1.6;
+
+#why h2, #pricing h2 { /* Styling untuk judul section */
+    text-align: center;
+    font-size: clamp(24px, 4vw, 32px);
+    margin-bottom: 40px;
+    color: var(--color-text);
+    color: #1f2d3d;
 }
 
 .features,
 .pricing {
   display: flex;
-  gap: 20px;
+  gap: 30px; /* Jarak lebih besar */
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .card {
-  flex: 1 1 200px;
+  flex: 1 1 280px; /* Basis flex sedikit lebih besar */
+  max-width: 350px; /* Max width untuk card */
   background: white;
-  padding: 20px;
+  padding: 25px;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-default);
   text-align: center;
-  transition: transform 0.4s ease, box-shadow 0.3s ease;
-  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* transform-style: preserve-3d; Dihapus karena rotateY kecil, mungkin tidak perlu */
 }
 
 .card:hover {
-  transform: scale(1.05) rotateY(3deg);
+  transform: translateY(-5px) scale(1.02); /* Efek hover lebih halus */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card h3 {
-  margin-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 22px; /* Ukuran font judul card */
+  color: var(--color-primary);
+}
+.card p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 10px;
 }
 
 .price {
-  font-size: 20px;
+  font-size: 24px; /* Ukuran harga lebih besar */
   font-weight: 700;
-  margin: 10px 0;
+  margin: 15px 0;
+  color: var(--color-accent);
 }
 
-.card a {
+.card .btn-primary { /* Tombol di dalam card */
   display: inline-block;
-  margin-top: 12px;
-  background: var(--color-primary);
-  color: white;
-  padding: 10px 18px;
-  border-radius: var(--radius);
-  text-decoration: none;
+  margin-top: 20px;
+  padding: 12px 25px;
+  /* Style lain diwarisi dari .btn-primary global */
 }
+
 
 .feature-card {
-  background: transparent;
-  box-shadow: none;
+  background: white; /* Ubah agar konsisten dengan card lain atau buat transparan jika diinginkan */
+  box-shadow: var(--shadow-default); /* Tambahkan shadow agar konsisten */
+  padding-bottom: 30px; /* Padding bawah lebih agar ikon tidak terlalu dekat */
 }
 
 .feature-card .icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 70px; /* Ukuran ikon lebih besar */
+  height: 70px;
+  border-radius: 20px; /* Radius lebih besar */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 12px auto;
+  font-size: 32px; /* Ukuran font ikon lebih besar */
+  margin: 0 auto 20px auto; /* Margin bawah lebih besar */
   color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .icon-orange { background-color: var(--color-primary); }
-.icon-blue   { background-color: #60a5fa; }
-.icon-red    { background-color: #f87171; }
-.icon-green  { background-color: #34d399; }
+.icon-blue   { background-color: #60a5fa; } /* Warna biru lebih modern */
+.icon-red    { background-color: #f87171; } /* Warna merah lebih modern */
+.icon-green  { background-color: #34d399; } /* Warna hijau lebih modern */
 
 
-
-/* Section Formulir */
+/* Section Formulir (jika ada di halaman ini atau pesan.html) */
 .form-section {
   background: #fff;
   max-width: 600px;
   margin: 60px auto;
-  padding: 40px;
+  padding: 30px 40px;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-default);
 }
 
 .form-section h1 {
-  font-size: 28px;
+  font-size: clamp(24px, 4vw, 28px);
   margin-bottom: 10px;
   color: var(--color-primary);
+  text-align: center;
 }
 
 .form-section p {
   margin-bottom: 30px;
   font-size: 16px;
   color: #555;
+  text-align: center;
+  line-height: 1.6;
 }
 
 .order-form {
   display: flex;
   flex-direction: column;
+  gap: 15px; /* Jarak antar field form */
 }
 
 .order-form label {
-  margin-bottom: 6px;
+  margin-bottom: 0; /* Dihapus karena gap pada .order-form */
   font-weight: 600;
-  margin-top: 16px;
+  /* margin-top: 16px; Dihapus */
 }
 
 .order-form input,
 .order-form select,
 .order-form textarea {
-  padding: 12px;
+  padding: 14px; /* Padding lebih besar */
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: var(--radius);
-  transition: border-color var(--transition-speed);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
   font-family: var(--font-family);
+  width: 100%; /* Pastikan input memenuhi lebar */
+  box-sizing: border-box; /* Agar padding tidak menambah lebar total */
 }
 
 .order-form input:focus,
@@ -298,14 +388,16 @@ section {
 .order-form textarea:focus {
   border-color: var(--color-primary);
   outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2); /* Efek focus lebih jelas */
 }
 
 .order-form textarea {
   resize: vertical;
+  min-height: 120px; /* Tinggi minimal textarea */
 }
 
 .order-form button {
-  margin-top: 24px;
+  /* margin-top: 24px; Dihapus, gunakan gap */
   padding: 14px;
   background: var(--color-primary);
   color: white;
@@ -314,74 +406,105 @@ section {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--transition-speed);
+  transition: background-color var(--transition-speed), transform var(--transition-speed);
 }
 
 .order-form button:hover {
   background: #e85e00;
+  transform: translateY(-1px);
 }
 
 footer {
   text-align: center;
-  padding: 40px;
+  padding: 40px 20px;
   background: #dfeffc;
   color: #6b7280;
+  margin-top: 60px; /* Jarak dari section terakhir */
 }
 
 .popup {
-  display: none;
+  display: flex; /* Ubah ke flex untuk alignment */
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: var(--color-popup-bg);
+  /* background: var(--color-popup-bg); Dihapus, dikontrol oleh #overlay */
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  transition: opacity var(--transition-speed) ease;
+  opacity: 0; /* Mulai transparan */
+  visibility: hidden; /* Mulai tersembunyi */
+  transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+  padding: 20px; /* Padding agar konten popup tidak menempel di tepi layar kecil */
+  box-sizing: border-box;
 }
 
 .popup.show {
-  display: flex;
   opacity: 1;
+  visibility: visible;
 }
 
 .popup-content {
   background: #fff;
-  padding: 30px;
+  padding: 30px 35px; /* Padding lebih besar */
   border-radius: var(--radius-large);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px; /* Max width sedikit lebih besar */
   box-shadow: var(--shadow-popup);
   position: relative;
-  animation: popup-fade-in 0.3s ease;
+  animation: popup-fade-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Animasi lebih smooth */
+  transform: scale(0.95); /* Mulai sedikit kecil untuk animasi */
+  transition: transform var(--transition-speed) ease;
 }
+.popup.show .popup-content {
+    transform: scale(1); /* Kembali ke ukuran normal saat show */
+}
+
 
 @keyframes popup-fade-in {
   from {
-    transform: scale(0.95);
+    transform: scale(0.9) translateY(10px); /* Efek dari bawah sedikit */
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
 .popup-content h2 {
-  margin-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: 25px;
   text-align: center;
+  font-size: 24px;
+  color: var(--color-primary);
 }
 
-.popup-content input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 16px;
+.popup-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; /* Jarak antar input di form popup */
+}
+
+.popup-content input[type="email"],
+.popup-content input[type="password"] {
+  width: 100%; /* Sudah default karena form adalah flex column */
+  padding: 12px 15px;
+  /* margin-bottom: 16px; Dihapus, gunakan gap */
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: var(--radius);
   font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+.popup-content input[type="email"]:focus,
+.popup-content input[type="password"]:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
 }
 
-.popup-content button {
+
+.popup-content button[type="submit"] {
   width: 100%;
   padding: 12px;
   background: var(--color-primary);
@@ -391,41 +514,116 @@ footer {
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+.popup-content button[type="submit"]:hover {
+    background-color: #e85e00;
 }
 
 .popup-content .close {
   position: absolute;
-  top: 10px; right: 15px;
-  font-size: 24px;
+  top: 15px; right: 20px;
+  font-size: 28px;
+  font-weight: bold;
   cursor: pointer;
   color: #888;
+  transition: color var(--transition-speed);
+}
+.popup-content .close:hover {
+    color: var(--color-text);
 }
 
-.popup-content .signup-link,
-.toggle-auth {
-  margin-top: 16px;
+.popup-content .toggle-auth { /* Dulu .signup-link */
+  margin-top: 20px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
 }
 
-.popup-content a {
+.popup-content .toggle-auth a {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
 }
+.popup-content .toggle-auth a:hover {
+    text-decoration: underline;
+}
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  header {
+    padding: 15px 20px;
+    flex-direction: column; /* Header items stack on small screens */
+    gap: 10px;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap; /* Allow nav items to wrap */
+    justify-content: center; /* Center nav items */
+    gap: 5px 10px; /* Gap antar nav items */
+  }
+  nav a {
+    margin-left: 0; /* Hapus margin kiri karena menggunakan gap */
+    font-size: 15px; /* Sedikit perkecil font nav */
+  }
+  nav a.login {
+    padding: 7px 14px; /* Padding sedikit lebih kecil */
+  }
+
   .hero {
+    padding: 60px 20px;
     flex-direction: column;
     text-align: center;
   }
+  .hero-text {
+      max-width: 100%; /* Ambil lebar penuh di mobile */
+  }
 
   .buttons a {
-    margin-bottom: 12px;
+    padding: 10px 18px; /* Tombol lebih kecil */
+    font-size: 15px;
+    width: calc(50% - 10px); /* Dua tombol per baris jika memungkinkan */
+    box-sizing: border-box;
+    text-align: center;
   }
+  .buttons a:last-child:nth-child(odd) { /* Jika hanya ada satu tombol atau tombol ganjil terakhir */
+    width: auto; /* Biarkan mengambil lebar kontennya */
+    min-width: 150px;
+  }
+
 
   .features, .pricing {
     flex-direction: column;
+    gap: 20px;
+  }
+  .card {
+      flex-basis: auto; /* Hapus flex-basis agar stack dengan baik */
+  }
+
+  .aboutUs-background > div {
+      padding: 20px;
   }
 }
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 26px;
+    }
+    .hero p {
+        font-size: 15px;
+    }
+    .buttons a {
+        width: 100%; /* Satu tombol per baris di layar sangat kecil */
+        margin-bottom: 10px;
+    }
+    .buttons a:last-child {
+        margin-bottom: 0;
+    }
+
+    .popup-content {
+        padding: 25px 20px;
+    }
+    .popup-content h2 {
+        font-size: 22px;
+    }
+}
+

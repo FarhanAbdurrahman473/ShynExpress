@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shyn Express - Kamar Bersih, Hidup Nyaman!</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div id="overlay"></div>
@@ -16,6 +15,9 @@
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
       <a href="#pricing">Pricing</a>
+      <!-- Tombol login sekarang hanya memiliki kelas 'login' jika kita menyederhanakan,
+           atau tetap dengan 'btn-secondary login' jika kita hanya memperbaiki CSS.
+           Untuk perbaikan ini, saya akan biarkan kelasnya dan memperbaiki CSS agar kompatibel. -->
       <a href="#" class="btn-secondary login" onclick="toggleLoginPopup()">Login</a>
     </nav>
   </header>
@@ -29,7 +31,7 @@
         <a href="#pricing" class="btn-secondary">Lihat Paket</a>
       </div>
     </div>
-        <div class="hero-image">
+    <div class="hero-image">
       <img src="./Asset/logo.png" alt="Logo Shyn Express">
     </div>
   </section>
@@ -115,8 +117,8 @@
       const popup = document.getElementById("login-popup");
       const overlay = document.getElementById("overlay");
       popup.classList.toggle("show");
-      overlay.classList.toggle("blur");
-      document.body.classList.toggle("blur-active");
+      overlay.classList.toggle("blur"); // Ini akan mengontrol blur melalui #overlay
+      document.body.classList.toggle("blur-active"); // Ini mungkin masih berguna untuk logika lain jika ada
       resetAuthForm();
     }
 
@@ -140,6 +142,7 @@
     }
 
     function resetAuthForm() {
+      document.getElementById("auth-form").reset(); // Cara lebih baik untuk mereset form
       document.getElementById("popup-title").textContent = "Login";
       document.getElementById("signup-extra").style.display = "none";
       document.getElementById("submit-btn").textContent = "Masuk";
@@ -155,12 +158,14 @@
       const isSignup = document.getElementById("popup-title").textContent === "Sign Up";
 
       if (isSignup && password !== confirmPasswordInput.value) {
+        // Menggunakan alert sementara, idealnya diganti dengan notifikasi custom
         alert("Password dan konfirmasi tidak cocok!");
         return;
       }
 
       const endpoint = isSignup ? "signup" : "login";
       try {
+        // Ganti URL ini dengan endpoint backend Anda yang sebenarnya
         const response = await fetch(`http://localhost:3000/${endpoint}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -169,13 +174,14 @@
 
         const data = await response.json();
         if (response.ok) {
-          alert(data.message || "Berhasil!");
+          alert(data.message || "Berhasil!"); // Idealnya notifikasi custom
           toggleLoginPopup();
         } else {
-          alert(data.error || "Terjadi kesalahan.");
+          alert(data.error || "Terjadi kesalahan."); // Idealnya notifikasi custom
         }
       } catch (err) {
-        alert("Gagal menghubungi server.");
+        console.error("Fetch error:", err);
+        alert("Gagal menghubungi server."); // Idealnya notifikasi custom
       }
     });
   </script>
